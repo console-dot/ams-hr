@@ -56,7 +56,6 @@ export const RegisterEmployee = () => {
       }
     } catch (error) {
       console.log(error);
-      dispatch({ type: "ERROR", payload: res?.message });
     }
   };
   useEffect(() => {

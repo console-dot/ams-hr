@@ -125,7 +125,8 @@ export const EmployeeReport = () => {
         </div>
         <div
           onClick={() => {
-            setActivetab("leaves"), setActive("leaves");
+            setActivetab("leaves");
+            setActive("leaves");
           }}
           className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${
             active === "leaves"

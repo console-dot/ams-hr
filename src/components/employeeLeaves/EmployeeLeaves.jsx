@@ -192,10 +192,6 @@ export const EmployeeLeaves = () => {
       }
     } catch (error) {
       console.log(error);
-      dispatch({
-        type: "ERROR",
-        payload: res.message,
-      });
     }
   };
   let visited = false;

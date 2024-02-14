@@ -65,10 +65,6 @@ export const SignupForm = ({ setEmpData, empData }) => {
       }
     } catch (error) {
       console.log(error);
-      dispatch({
-        type: "ERROR",
-        payload: res?.message,
-      });
     }
   };
   const getAllDesignations = async () => {

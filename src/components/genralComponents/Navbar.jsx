@@ -37,10 +37,6 @@ export const Navbar = () => {
       }
     } catch (error) {
       console.log(error);
-      dispatch({
-        type: "ERROR",
-        payload: res.message,
-      });
     }
   };
   return (
