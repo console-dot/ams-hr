@@ -1,4 +1,4 @@
-import { BASE_URL } from "./config";
+import { BASE_URL, Login_URL } from "./config";
 
 export const getAllEmployees = async () => {
   const url = `${BASE_URL}/employee`;
@@ -50,7 +50,7 @@ export const getDesignations = async () => {
     .catch((err) => err);
 };
 export const getSingleEmployee = async (id) => {
-  const url = `${BASE_URL}/employee/${id}`;
+  const url = `${Login_URL}/employee/${id}`;
   return fetch(url, {
     method: "GET",
     headers: {
