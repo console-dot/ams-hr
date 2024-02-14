@@ -1,5 +1,7 @@
+import { BASE_URL } from "./config";
+
 export const login = (data) => {
-  return fetch("http://localhost:5000/api/v1/auth/login", {
+  return fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {

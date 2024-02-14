@@ -1,6 +1,7 @@
+import { BASE_URL } from "./config"
 
 export const uploadFile = async (body) => {
-  const url = "http://localhost:5000/api/v1/file";
+  const url = `${BASE_URL}/file`;
   return fetch(url, {
     method: "POST",
     headers: {
@@ -13,7 +14,7 @@ export const uploadFile = async (body) => {
 };
 export const getFileUrl = async (id) => {
   console.log(id)
-  const url = `http://localhost:5000/api/v1/file/${id}`;
+  const url = `${BASE_URL}/file/${id}`;
   return fetch(url, {
     method: "GET",
     headers: {

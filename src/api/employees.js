@@ -1,6 +1,7 @@
+import { BASE_URL } from "./config";
 
 export const getAllEmployees = async () => {
-  const url = "http://localhost:5000/api/v1/employee";
+  const url = `${BASE_URL}/employee`;
   return fetch(url, {
     method: "GET",
     headers: {
@@ -12,7 +13,7 @@ export const getAllEmployees = async () => {
 };
 
 export const createEmployee = async (data) => {
-  const url = "http://localhost:5000/api/v1/employee";
+  const url = `${BASE_URL}/employee`;
   return fetch(url, {
     method: "POST",
     headers: {
@@ -25,7 +26,7 @@ export const createEmployee = async (data) => {
     .catch((err) => err);
 };
 export const updateEmployee = async (id, data) => {
-  const url = `http://localhost:5000/api/v1/employee/${id}`;
+  const url = `${BASE_URL}/employee/${id}`;
   return fetch(url, {
     method: "PUT",
     headers: {
@@ -38,7 +39,7 @@ export const updateEmployee = async (id, data) => {
     .catch((err) => err);
 };
 export const getDesignations = async () => {
-  const url = "http://localhost:5000/api/v1/designation";
+  const url = `${BASE_URL}/designation`;
   return fetch(url, {
     method: "GET",
     headers: {
@@ -49,7 +50,7 @@ export const getDesignations = async () => {
     .catch((err) => err);
 };
 export const getSingleEmployee = async (id) => {
-  const url = `http://localhost:5000/api/v1/employee/${id}`;
+  const url = `${BASE_URL}/employee/${id}`;
   return fetch(url, {
     method: "GET",
     headers: {
