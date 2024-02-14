@@ -1,4 +1,4 @@
-import { BASE_URL } from "./config"
+import { BASE_URL, Login_URL } from "./config"
 
 export const uploadFile = async (body) => {
   const url = `${BASE_URL}/file`;
@@ -13,8 +13,7 @@ export const uploadFile = async (body) => {
     .catch((err) => err);
 };
 export const getFileUrl = async (id) => {
-  console.log(id)
-  const url = `${BASE_URL}/file/${id}`;
+  const url = `${Login_URL}/file/${id}`;
   return fetch(url, {
     method: "GET",
     headers: {

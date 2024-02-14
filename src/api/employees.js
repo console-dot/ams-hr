@@ -39,7 +39,7 @@ export const updateEmployee = async (id, data) => {
     .catch((err) => err);
 };
 export const getDesignations = async () => {
-  const url = `${BASE_URL}/designation`;
+  const url = `${Login_URL}/designation`;
   return fetch(url, {
     method: "GET",
     headers: {
