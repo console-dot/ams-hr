@@ -1,7 +1,7 @@
 import { BASE_URL, Login_URL } from "./config";
 
 export const getAllEmployees = async () => {
-  const url = `${BASE_URL}/employee`;
+  const url = `${Login_URL}/employee`;
   return fetch(url, {
     method: "GET",
     headers: {
@@ -13,7 +13,7 @@ export const getAllEmployees = async () => {
 };
 
 export const createEmployee = async (data) => {
-  const url = `${BASE_URL}/employee`;
+  const url = `${Login_URL}/employee`;
   return fetch(url, {
     method: "POST",
     headers: {
@@ -26,7 +26,7 @@ export const createEmployee = async (data) => {
     .catch((err) => err);
 };
 export const updateEmployee = async (id, data) => {
-  const url = `${BASE_URL}/employee/${id}`;
+  const url = `${Login_URL}/employee/${id}`;
   return fetch(url, {
     method: "PUT",
     headers: {
