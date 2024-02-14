@@ -1,7 +1,7 @@
-import { BASE_URL } from "./config";
+import { BASE_URL, WS_URL } from "./config";
 
 export const login = (data) => {
-  return fetch(`${BASE_URL}/auth/login`, {
+  return fetch(`${WS_URL}/auth/login`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
