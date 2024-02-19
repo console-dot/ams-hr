@@ -3,7 +3,6 @@ import { BreadCurmbs, Status } from "../genralComponents";
 import { useNavigate } from "react-router-dom";
 import { getAllAttendace } from "../../api/attendance";
 import { useToastState } from "../../context";
-import { socket } from "../../App";
 import { ImCross } from "react-icons/im";
 
 export const convertDate = (value, format = "full") => {
@@ -171,19 +170,6 @@ export const AttendanceTable = () => {
     document.addEventListener("keydown", handleKeyPress);
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
-    };
-  }, []);
-  useEffect(() => {
-    socket.on("updateAttendance", async (data) => {
-      await getAttendances();
-      dispatch({
-        type: "SUCCESS",
-        payload: `Attendace for user ${data} Updated`,
-      });
-    });
-
-    return () => {
-      socket.off("updateAttendance");
     };
   }, []);
 

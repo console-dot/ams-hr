@@ -17,6 +17,7 @@ export const Login = () => {
       const res = await login({
         username: formData.get("username"),
         password: formData.get("password"),
+        module: "hr",
       });
       if (res?.status !== 200) {
         dispatch({ type: "ERROR", payload: res?.message });
@@ -25,6 +26,7 @@ export const Login = () => {
       dispatch({ type: "SUCCESS", payload: res?.message });
       localStorage.setItem("@token", res?.data?.token);
       localStorage.setItem("@user", JSON.stringify(res?.data?.employeeExist));
+      localStorage.setItem("@designation", res?.data?.userDesignation);
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
