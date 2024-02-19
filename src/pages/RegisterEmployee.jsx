@@ -90,8 +90,8 @@ export const RegisterEmployee = () => {
         </div>
         <div className="text-center shadow-lg max-w-5xl card bg-base-200">
           <div className="card-body">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div class="col-span-1 md:col-span-2 lg:col-span-2 flex items-center flex-col justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="col-span-1 md:col-span-2 lg:col-span-2 flex items-center flex-col justify-center">
                 <div className="p-4 gap-2 w-full">
                   <div className="card w-full p-2 h-full  border shadow-md flex justify-center items-center ">
                     <div className="avatar relative">
