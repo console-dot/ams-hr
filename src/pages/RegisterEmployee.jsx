@@ -32,7 +32,7 @@ export const RegisterEmployee = () => {
       fileInput.click();
     }
   };
-
+ console.log(empData,'asd')
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setEmpData({
@@ -51,6 +51,7 @@ export const RegisterEmployee = () => {
       const id = empData?.avatar;
       const res = await getFileUrl(id);
       if (res.status === 200) {
+        console.log(res, 'asd')
         setImgSrc(res?.url);
         dispatch({ type: "SUCCESS", payload: "Image fetched Successfully" });
       }

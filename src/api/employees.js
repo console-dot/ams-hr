@@ -49,8 +49,30 @@ export const getDesignations = async () => {
     .then((res) => res?.json())
     .catch((err) => err);
 };
+export const getDepartments = async () => {
+  const url = `${Login_URL}/department`;
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: localStorage.getItem("@token"),
+    },
+  })
+    .then((res) => res?.json())
+    .catch((err) => err);
+};
 export const getSingleEmployee = async (id) => {
   const url = `${Login_URL}/employee/${id}`;
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: localStorage.getItem("@token"),
+    },
+  })
+    .then((res) => res?.json())
+    .catch((err) => err);
+};
+export const getSingleDesignation = async (id) => {
+  const url = `${Login_URL}/designation/${id}`;
   return fetch(url, {
     method: "GET",
     headers: {

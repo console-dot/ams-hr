@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
+  createDepartment,
   createEmployee,
+  getDepartments,
   getDesignations,
   getFileUrl,
   getSingleEmployee,
@@ -9,9 +11,11 @@ import {
 } from "../../api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToastState } from "../../context";
+import { convertDate } from "../attendanceTable";
 
 export const SignupForm = ({ setEmpData, empData }) => {
   const [desi, setDesi] = useState([]);
+  const [depa, setDepa] = useState([]);
   const [id, setId] = useState("");
   const [employeeData, setEmployeeData] = useState("");
   const params = useParams();
@@ -77,6 +81,17 @@ export const SignupForm = ({ setEmpData, empData }) => {
       console.log(error);
     }
   };
+  const getAllDepartments = async () => {
+    try {
+      const res = await getDepartments();
+      if (res.status === 200) {
+        setDepa(res?.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+ 
   const getEmpData = async () => {
     try {
       const res = await getSingleEmployee(id);
@@ -89,6 +104,9 @@ export const SignupForm = ({ setEmpData, empData }) => {
   };
   useEffect(() => {
     getAllDesignations();
+  }, []);
+  useEffect(() => {
+    getAllDepartments();
   }, []);
   useEffect(() => {
     if (id && id !== "") {
@@ -142,8 +160,9 @@ export const SignupForm = ({ setEmpData, empData }) => {
               name="designation"
               id="designation"
             >
-              {desi?.map((obj) => (
-                <option value={obj?._id}>{obj?.title}</option>
+              <option default>Select Designation</option>
+              {desi?.map((obj) => (<>
+                <option value={obj?._id}>{obj?.title}</option></>
               ))}
             </select>
           </label>
@@ -227,28 +246,14 @@ export const SignupForm = ({ setEmpData, empData }) => {
         </div>
         {/* Second row with Team and Department */}
         <div className="flex space-x-4 mb-4">
-          {/* Team */}
-          <label className="form-control w-full max-w-xs">
-            <div className="label">
-              <span className="label-text text-[#9a9a9a]">Team</span>
-            </div>
-            <input
-              onChange={(e) => setEmpData({ ...empData, team: e.target.value })}
-              value={empData?.team}
-              type="text"
-              placeholder="Type here"
-              className="input input-bordered w-full max-w-xs"
-              id="team"
-              name="team"
-            />
-          </label>
+        
 
           {/* Department */}
           <label className="form-control w-full max-w-xs">
-            <div className="label ">
-              <span className="label-text text-[#9a9a9a] ">Department</span>
+            <div className="label">
+              <span className="label-text text-[#9a9a9a]">Department</span>
             </div>
-            <input
+            <select
               onChange={(e) =>
                 setEmpData({ ...empData, department: e.target.value })
               }
@@ -257,9 +262,15 @@ export const SignupForm = ({ setEmpData, empData }) => {
               type="text"
               placeholder="Type here"
               className="input input-bordered w-full max-w-xs"
-              id="department"
               name="department"
-            />
+              id="department"
+            >
+              <option default>Select Dept.</option>
+              {depa?.map((obj) => (
+               <> 
+                <option value={obj?._id}>{obj?.title}</option></>
+              ))}
+            </select>
           </label>
           <label className="form-control w-full max-w-xs">
             <div className="label">
@@ -332,9 +343,9 @@ export const SignupForm = ({ setEmpData, empData }) => {
                 onChange={(e) =>
                   setEmpData({ ...empData, joiningDate: e.target.value })
                 }
-                value={empData?.joiningDate}
+                value={convertDate(empData?.joiningDate)}
                 required
-                type="date"
+                type={empData?.joiningDate ? 'text' : 'date'}
                 placeholder="Type here"
                 className="input input-bordered w-full max-w-xs"
                 id="joiningDate"
@@ -353,7 +364,7 @@ export const SignupForm = ({ setEmpData, empData }) => {
                     setEmpData({ ...empData, endingDate: e.target.value })
                   }
                   value={empData?.endingDate}
-                  type="text"
+                  type="date"
                   placeholder="Type here"
                   className="input input-bordered w-full max-w-xs"
                   id="endingDate"

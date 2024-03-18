@@ -26,14 +26,13 @@ export const EmployeesTable = () => {
       </>
     );
   };
-
+  
   const filteredData = dataToChange?.filter((obj) => {
     return obj?.employeeId
       ?.toString()
       .includes(searchQuery.toLocaleLowerCase());
   });
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
   };
