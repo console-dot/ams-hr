@@ -1,5 +1,5 @@
 import React from "react";
-import { convertDate } from "../attendanceTable";
+import { convertDate, convertDateWithoutTime } from "../attendanceTable";
 
 export const AbsentsDetail = ({ absents }) => {
   return (
@@ -16,7 +16,7 @@ export const AbsentsDetail = ({ absents }) => {
           <tbody>
             {absents?.map((obj, index) => (
               <tr key={index}>
-                <th>{convertDate(obj, "full")}</th>
+                <th>{convertDateWithoutTime(obj, "full")}</th>
                 <td className="flex items-center justify-start gap-2 ">--</td>
               </tr>
             ))}

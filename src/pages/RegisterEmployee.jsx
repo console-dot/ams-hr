@@ -26,13 +26,11 @@ export const RegisterEmployee = () => {
   });
   const params = useParams();
   const { dispatch } = useToastState();
-
   const handleFileClick = () => {
     if (fileInput) {
       fileInput.click();
     }
   };
-
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setEmpData({
@@ -60,6 +58,7 @@ export const RegisterEmployee = () => {
   };
   useEffect(() => {
     if (
+      params?.id &&
       empData?.avatar !== "" ||
       empData?.avatar !== undefined ||
       empData?.avatar !== null

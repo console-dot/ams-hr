@@ -8,6 +8,7 @@ import {
   Login,
   RegisterEmployee,
 } from "../pages";
+import { MyPDFDocument } from "../components/pdfDownloads/MyPDFDocument ";
 
 export const AllRoutes = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,6 +47,7 @@ export const AllRoutes = () => {
       <Route path="/employees" element={<Employess />} />
       <Route path="/employees/edit/:id" element={<RegisterEmployee />} />
       <Route path="/employee-leaves" element={<EmployeeLeavesPage />} />
+      <Route path="/employee-report" element={<MyPDFDocument />} />
     </Routes>
   );
 };

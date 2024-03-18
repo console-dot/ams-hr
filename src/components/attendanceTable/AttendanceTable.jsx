@@ -4,6 +4,44 @@ import { useNavigate } from "react-router-dom";
 import { getAllAttendace } from "../../api/attendance";
 import { useToastState } from "../../context";
 import { ImCross } from "react-icons/im";
+export const convertDateWithoutTime = (value, format = "full") => {
+  const dateObj = new Date(value);
+  if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+    // Handle the case where value is not a valid Date object
+    return "--";
+  }
+
+  let options;
+
+  if (format === "full") {
+    options = {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    };
+  } else if (format === "monthAndDay") {
+    options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    };
+  } else if (format === "dayAndMonth") {
+    options = {
+      month: "short",
+      day: "numeric",
+    };
+  } else {
+    // Handle other format options if needed
+    return "Invalid Format";
+  }
+
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    ...options,
+    timeZone: "Asia/Karachi",
+  }).format(dateObj);
+
+  return `${formattedDate}`;
+};
 
 export const convertDate = (value, format = "full") => {
   const dateObj = new Date(value);
@@ -27,7 +65,12 @@ export const convertDate = (value, format = "full") => {
       year: "numeric",
       month: "short",
       day: "numeric",
-    };
+    };}
+    else if (format === "time") {
+      options = {
+        hour: "numeric",
+        minute: "numeric",
+      };
   } else {
     // Handle other format options if needed
     return "Invalid Format";
@@ -313,7 +356,9 @@ export const AttendanceTable = () => {
         <div className="modal-box ">
           <div className="modal-action  m-0 p-0 mb-2">
             <form method="dialog">
-              <ImCross />
+              <ImCross onClick={() =>
+                document.getElementById("report-modal").close() 
+              } className="cursor-pointer"/>
             </form>
           </div>
           <div className="w-full  flex justify-between items-center mb-2 gap-2">

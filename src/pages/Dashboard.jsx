@@ -7,6 +7,7 @@ export const Dashboard = () => {
     <GenralLayout>
       <div className=" p-4">
         <AttendanceTable />
+        
       </div>
     </GenralLayout>
   );

@@ -36,3 +36,62 @@
     transform: rotate(360deg);
   }
 }
+.printable {
+  display: none;
+ 
+}
+.nonPrintable {
+  display: block;
+
+}
+@media print {
+  .printable {
+    display: block;
+    width: 210mm;
+    margin: 0 auto;
+    padding: 20mm;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  .nonPrintable{
+    display: none;
+  }
+  body {
+    font-size: 12pt;
+  }
+  .pdf-content {
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+
+  .employee-details {
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+}

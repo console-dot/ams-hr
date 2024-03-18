@@ -6,6 +6,9 @@ import { GenralReport } from "./GenralReport";
 import { LeavesDetail } from "./LeavesDetail";
 import { AbsentsDetail } from "./AbsentsDetail";
 import { HolidayDetails } from "./HolidayDetails";
+import PrintButton from "../pdfDownloads/PrintButton";
+import { Test } from "../pdfDownloads/Test";
+import { MyPDFDocument } from "../pdfDownloads/MyPDFDocument ";
 
 export const EmployeeReport = () => {
   const [empData, setEmpData] = useState([]);
@@ -28,6 +31,7 @@ export const EmployeeReport = () => {
   const returnDaysReport = (active) => {
     return empData.attendance?.filter((obj) => obj?.status === active).length;
   };
+
   const genrateReport = async () => {
     try {
       const res = await genReport(searchParams);
@@ -92,127 +96,128 @@ export const EmployeeReport = () => {
 
   return (
     <div className="overflow-x-auto p-4 relative">
-      <div className="flex w-full justify-start items-center p-2 gap-2">
+      <div className="nonPrintable">
         <div className="flex w-full justify-start items-center p-2 gap-2">
-          <p className="font-bold">Name:</p> <span>{me?.name}</span>
+          <div className="flex w-full justify-start items-center p-2 gap-2">
+            <p className="font-bold">Name:</p> <span>{me?.name}</span>
+          </div>
+          <div className="flex w-full justify-start items-center p-2 gap-2">
+            <p className="font-bold">Employee Id:</p>
+            <span>{me?.employeeId}</span>
+          </div>
+          <div className="flex w-full justify-start items-center p-2 gap-2">
+            <p className="font-bold">Department:</p>
+            <span>{getDepartment(me?.employeeId?.split("-")[1])}</span>
+          </div>
         </div>
-        <div className="flex w-full justify-start items-center p-2 gap-2">
-          <p className="font-bold">Employee Id:</p>
-          <span>{me?.employeeId}</span>
-        </div>
-        <div className="flex w-full justify-start items-center p-2 gap-2">
-          <p className="font-bold">Department:</p>
-          <span>{getDepartment(me?.employeeId?.split("-")[1])}</span>
-        </div>
-      </div>
 
-      <div className="w-full flex justify-between p-2 items-center gap-4 ">
-        <div
-          onClick={() => {
-            setActivetab("report");
-            setActive("report");
-          }}
-          className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${
-            active === "report"
+        <div className="w-full flex justify-between p-2 items-center gap-4 ">
+          <div
+            onClick={() => {
+              setActivetab("report");
+              setActive("report");
+            }}
+            className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${active === "report"
               ? "bg-white"
               : "bg-gray-300 hover:bg-[#166583] hover:text-slate-50"
-          }`}
-        >
-          Report
-          <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
-            {empData?.attendance?.length}
+              }`}
+          >
+            Presents
+            <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
+              {empData?.attendance?.length}
+            </div>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            setActivetab("leaves");
-            setActive("leaves");
-          }}
-          className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${
-            active === "leaves"
+          <div
+            onClick={() => {
+              setActivetab("leaves");
+              setActive("leaves");
+            }}
+            className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${active === "leaves"
               ? "bg-white"
               : "bg-gray-300 hover:bg-[#166583] hover:text-slate-50"
-          }`}
-        >
-          Leaves
-          <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
-            {empData?.leaves?.length}
+              }`}
+          >
+            Leaves
+            <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
+              {empData?.leaves?.length}
+            </div>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            {
-              setActivetab("absents");
-              setActive("absents");
-            }
-          }}
-          className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${
-            activeTab === "absents"
+          <div
+            onClick={() => {
+              {
+                setActivetab("absents");
+                setActive("absents");
+              }
+            }}
+            className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${activeTab === "absents"
               ? "bg-white"
               : "bg-gray-300 hover:bg-[#166583] hover:text-slate-50"
-          }`}
-        >
-          Absents
-          <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
-            {empData?.abDates?.length}
+              }`}
+          >
+            Absents
+            <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
+              {empData?.abDates?.length}
+            </div>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            setActivetab("report");
-            setActive("full");
-          }}
-          className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${
-            active === "full"
+          <div
+            onClick={() => {
+              setActivetab("report");
+              setActive("full");
+            }}
+            className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${active === "full"
               ? "bg-white"
               : "bg-gray-300 hover:bg-[#166583] hover:text-slate-50"
-          }`}
-        >
-          Full day
-          <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
-            {returnDaysReport("full")}
+              }`}
+          >
+            Full day
+            <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
+              {returnDaysReport("full")}
+            </div>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            setActivetab("report");
-            setActive("half");
-          }}
-          className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${
-            active === "half"
+          <div
+            onClick={() => {
+              setActivetab("report");
+              setActive("half");
+            }}
+            className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${active === "half"
               ? "bg-white"
               : "bg-gray-300 hover:bg-[#166583] hover:text-slate-50"
-          }`}
-        >
-          Half day
-          <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
-            {returnDaysReport("half")}
+              }`}
+          >
+            Half day
+            <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
+              {returnDaysReport("half")}
+            </div>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            setActivetab("holiday");
-            setActive("holiday");
-          }}
-          className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${
-            active === "holiday"
+          <div
+            onClick={() => {
+              setActivetab("holiday");
+              setActive("holiday");
+            }}
+            className={`border w-full border-b-0 cursor-pointer gap-4 p-2 rounded-md rounded-br-none flex justify-center items-center rounded-bl-none ${active === "holiday"
               ? "bg-white"
               : "bg-gray-300 hover:bg-[#166583] hover:text-slate-50"
-          }`}
-        >
-          Public holidays
-          <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
-            {holiday?.length}
+              }`}
+          >
+            Public holidays
+            <div className="badge border-[#166583] badge-outline hover:bg-slate-50 hover:text-black badge-lg">
+              {holiday?.length}
+            </div>
           </div>
         </div>
-      </div>
 
-      {activeTab === "report" && (
-        <GenralReport data={empData?.attendance} active={active} />
-      )}
-      {activeTab === "leaves" && <LeavesDetail leaves={empData?.leaves} />}
-      {activeTab === "absents" && <AbsentsDetail absents={empData?.abDates} />}
-      {activeTab === "holiday" && <HolidayDetails holiday={holiday} />}
+        {activeTab === "report" && (
+          <GenralReport data={empData?.attendance} active={active} />
+        )}
+        {activeTab === "leaves" && <LeavesDetail leaves={empData?.leaves} />}
+        {activeTab === "absents" && <AbsentsDetail absents={empData?.abDates} />}
+        {activeTab === "holiday" && <HolidayDetails holiday={holiday} />}
+      </div>
+      {/* <PDFDownload empData={empData}/>     */}
+      {/* <MyPDFDocument empData={empData}/> */}
+      <div className=""> <PrintButton empData={empData} />
+</div>
+      
     </div>
   );
 };
