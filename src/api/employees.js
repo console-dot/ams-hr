@@ -26,6 +26,7 @@ export const createEmployee = async (data) => {
     .catch((err) => err);
 };
 export const updateEmployee = async (id, data) => {
+  console.log(data,'asdf')
   const url = `${Login_URL}/employee/${id}`;
   return fetch(url, {
     method: "PUT",

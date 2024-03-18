@@ -21,12 +21,16 @@ export const SignupForm = ({ setEmpData, empData }) => {
   const params = useParams();
   const { dispatch } = useToastState();
   const navigate = useNavigate();
-
+  
+  console.log(empData,'asd')
   const submitForm = async () => {
     try {
       const formData = new FormData();
+      console.log(upload?.avatar)
+      const upload = await uploadFile(empData?.avatar);
+      console.log(upload?.avatar,'asdf')
       formData.append("avatar", empData.avatar);
-      const upload = await uploadFile(formData);
+      
       if (upload.status === 200) {
         dispatch({
           type: "SUCCESS",
@@ -91,11 +95,12 @@ export const SignupForm = ({ setEmpData, empData }) => {
       console.log(error);
     }
   };
- 
+
   const getEmpData = async () => {
     try {
       const res = await getSingleEmployee(id);
       if (res.status === 200) {
+        console.log(res?.data, 'DATA')
         setEmployeeData(res?.data);
       }
     } catch (error) {
@@ -152,7 +157,7 @@ export const SignupForm = ({ setEmpData, empData }) => {
               onChange={(e) =>
                 setEmpData({ ...empData, designation: e.target.value })
               }
-              value={empData?.designation}
+              value={empData?.designation?.tit}
               required
               type="text"
               placeholder="Type here"
@@ -160,7 +165,7 @@ export const SignupForm = ({ setEmpData, empData }) => {
               name="designation"
               id="designation"
             >
-              <option default>Select Designation</option>
+              <option default>{empData?.designation?.title ? empData?.designation?.title: 'Select Designation'}</option>
               {desi?.map((obj) => (<>
                 <option value={obj?._id}>{obj?.title}</option></>
               ))}
@@ -246,7 +251,7 @@ export const SignupForm = ({ setEmpData, empData }) => {
         </div>
         {/* Second row with Team and Department */}
         <div className="flex space-x-4 mb-4">
-        
+
 
           {/* Department */}
           <label className="form-control w-full max-w-xs">
@@ -265,10 +270,10 @@ export const SignupForm = ({ setEmpData, empData }) => {
               name="department"
               id="department"
             >
-              <option default>Select Dept.</option>
+              <option default>{empData?.designation?.department?.title ? empData?.designation?.department?.title: 'Select Dept.'}</option>
               {depa?.map((obj) => (
-               <> 
-                <option value={obj?._id}>{obj?.title}</option></>
+                <>
+                  <option value={obj?._id}>{obj?.title}</option></>
               ))}
             </select>
           </label>
