@@ -13,7 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useToastState } from "../../context";
 import { convertDate } from "../attendanceTable";
 
-export const SignupForm = ({ setEmpData, empData }) => {
+export const SignupForm = ({file, setEmpData, empData }) => {
   const [desi, setDesi] = useState([]);
   const [depa, setDepa] = useState([]);
   const [id, setId] = useState("");
@@ -21,16 +21,13 @@ export const SignupForm = ({ setEmpData, empData }) => {
   const params = useParams();
   const { dispatch } = useToastState();
   const navigate = useNavigate();
-  
-  console.log(empData,'asd')
   const submitForm = async () => {
     try {
       const formData = new FormData();
-      console.log(upload?.avatar)
-      const upload = await uploadFile(empData?.avatar);
-      console.log(upload?.avatar,'asdf')
+      const upload = await uploadFile(file);
+      console.log(upload?.avatar, "upload?.avatar");
       formData.append("avatar", empData.avatar);
-      
+
       if (upload.status === 200) {
         dispatch({
           type: "SUCCESS",
@@ -100,7 +97,7 @@ export const SignupForm = ({ setEmpData, empData }) => {
     try {
       const res = await getSingleEmployee(id);
       if (res.status === 200) {
-        console.log(res?.data, 'DATA')
+        console.log(res?.data, "DATA");
         setEmployeeData(res?.data);
       }
     } catch (error) {
@@ -165,9 +162,15 @@ export const SignupForm = ({ setEmpData, empData }) => {
               name="designation"
               id="designation"
             >
-              <option default>{empData?.designation?.title ? empData?.designation?.title: 'Select Designation'}</option>
-              {desi?.map((obj) => (<>
-                <option value={obj?._id}>{obj?.title}</option></>
+              <option default>
+                {empData?.designation?.title
+                  ? empData?.designation?.title
+                  : "Select Designation"}
+              </option>
+              {desi?.map((obj) => (
+                <>
+                  <option value={obj?._id}>{obj?.title}</option>
+                </>
               ))}
             </select>
           </label>
@@ -251,8 +254,6 @@ export const SignupForm = ({ setEmpData, empData }) => {
         </div>
         {/* Second row with Team and Department */}
         <div className="flex space-x-4 mb-4">
-
-
           {/* Department */}
           <label className="form-control w-full max-w-xs">
             <div className="label">
@@ -270,10 +271,15 @@ export const SignupForm = ({ setEmpData, empData }) => {
               name="department"
               id="department"
             >
-              <option default>{empData?.designation?.department?.title ? empData?.designation?.department?.title: 'Select Dept.'}</option>
+              <option default>
+                {empData?.designation?.department?.title
+                  ? empData?.designation?.department?.title
+                  : "Select Dept."}
+              </option>
               {depa?.map((obj) => (
                 <>
-                  <option value={obj?._id}>{obj?.title}</option></>
+                  <option value={obj?._id}>{obj?.title}</option>
+                </>
               ))}
             </select>
           </label>
@@ -350,7 +356,7 @@ export const SignupForm = ({ setEmpData, empData }) => {
                 }
                 value={convertDate(empData?.joiningDate)}
                 required
-                type={empData?.joiningDate ? 'text' : 'date'}
+                type={empData?.joiningDate ? "text" : "date"}
                 placeholder="Type here"
                 className="input input-bordered w-full max-w-xs"
                 id="joiningDate"
