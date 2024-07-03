@@ -323,7 +323,7 @@ export const AttendanceTable = () => {
               <th className="px-3">Employee ID</th>
 
               <th>Employee Name</th>
-              <th>Department</th>
+              <th>Designation</th>
               <th>CheckIn Time</th>
               <th>CheckOut Time</th>
               <th>Status</th>
