@@ -42,7 +42,8 @@ const ImageCropper = ({ imageSrc, onCropComplete }) => {
           onCropComplete={onCropCompleteHandler}
         />
       </div>
-      <div style={{ marginTop: "20px", width: "300px" }}>
+      <div className="w-full  border-b-2 border-gray-500 mt-2"></div>
+      <div style={{ marginTop: "20px", width: "300px" }} className="flex justify-center items-center">
         <input
           type="range"
           min={1}
@@ -51,8 +52,14 @@ const ImageCropper = ({ imageSrc, onCropComplete }) => {
           value={zoom}
           onChange={(e) => onZoomChange(e.target.value)}
         />
+        
       </div>
-      <button onClick={onCropClick} style={{ marginTop: "20px" }}>
+      
+      <button
+        className="btn btn-accent text-white hover:scale-110"
+        onClick={onCropClick}
+        style={{ marginTop: "20px" }}
+      >
         Crop
       </button>
     </div>
