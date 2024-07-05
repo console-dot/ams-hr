@@ -2,12 +2,89 @@ import React, { useState, useEffect, useRef } from "react";
 import Modal from "react-modal";
 import { BreadCurmbs, Status } from "../genralComponents";
 import { useNavigate } from "react-router-dom";
-import { getAllAttendace, updateAttendance } from "../../api/attendance";
+import {
+  getAllAttendace,
+  markAttendance,
+  updateAttendance,
+} from "../../api/attendance";
 import { useToastState } from "../../context";
 import { ImCross } from "react-icons/im";
 import { FaPen } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa";
+import { getAllEmployees } from "../../api";
 
 Modal.setAppElement("#root");
+
+const AddAttendanceModal = ({
+  isOpen,
+  onClose,
+  onAdd,
+  formData,
+  setFormData,
+}) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAdd = async () => {
+    await onAdd(formData);
+    onClose();
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      style={{
+        content: {
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          bottom: "auto",
+          marginRight: "-50%",
+          transform: "translate(-50%, -50%)",
+        },
+      }}
+    >
+      <div className="flex flex-col gap-4">
+        <div className="text-lg font-bold">Add Attendance</div>
+        <hr className="bg-black" />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col">
+            <label htmlFor="employeeId">Employee ID</label>
+            <input
+              name="employeeId"
+              type="text"
+              value={formData.employeeId}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="checkin">Checkin</label>
+            <input
+              name="checkin"
+              type="datetime-local"
+              value={formData.checkin}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex justify-around items-center">
+            <button
+              className="btn btn-success hover:scale-110"
+              onClick={handleAdd}
+            >
+              Add
+            </button>
+            <button className="btn btn-error hover:scale-110" onClick={onClose}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 
 const EditModal = ({
   data,
@@ -32,8 +109,6 @@ const EditModal = ({
       [name]: value,
     }));
   };
-
-  // console.log(attendance)
 
   return (
     <Modal
@@ -63,7 +138,7 @@ const EditModal = ({
             </div>
           </div>
         </div>
-        <hr className=" bg-black" />
+        <hr className="bg-black" />
         <div className="flex flex-col justify-center gap-4">
           <div className="flex flex-col ">
             <label htmlFor="checkin">Checkin</label>
@@ -195,13 +270,18 @@ export const AttendanceTable = ({ data }) => {
     empId: "",
   });
   const [yourData, setYourData] = useState({});
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    employeeId: "",
+    checkin: "",
+  });
 
   const bData = [
     { text: "Home", link: "/dashboard" },
     { text: "Dashboard", link: "/dashboard", status: "active" },
   ];
   const designation = localStorage.getItem("@designation");
-  const [modalOpen, setModalOpen] = useState(false);
   const [attendance, setAttendace] = useState({});
   const employeeId = useRef();
   const navigate = useNavigate();
@@ -324,25 +404,24 @@ export const AttendanceTable = ({ data }) => {
     };
   }, []);
 
-  const openModal = (data) => {
+  const openEditModal = (data) => {
     setAttendace(data);
-    setModalOpen(true);
+    setEditModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+  };
+
+  const openAddModal = () => {
+    setAddModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setAddModalOpen(false);
   };
 
   const onUpdate = async (e) => {
-    // e.preventDefault();
-
-    // console.log(attendance);
-    // console.log("hi", yourData);
-    // const obj = {
-    //   employeeId: attendance?.employeeId?._id,
-    //   checkin: attendance?.checkin,
-    //   checkout: attendance?.checkout,
-    // };
     await updateAttendance(
       attendance?._id,
       attendance?.employeeId?._id,
@@ -350,6 +429,18 @@ export const AttendanceTable = ({ data }) => {
       yourData?.checkout
     );
     await getAttendances();
+  };
+
+  const onAddAttendance = async (formData) => {
+    console.log("1", formData);
+    const employees = await getAllEmployees();
+    if (employees.status === 200) {
+      const foundEmployee = await employees?.data?.find(
+        (employee) => employee.employeeId == formData?.employeeId
+      );
+      console.log("2", foundEmployee?._id);
+      await markAttendance(foundEmployee?._id, formData?.checkin);
+    }
   };
 
   return (
@@ -372,7 +463,7 @@ export const AttendanceTable = ({ data }) => {
             }
           />
         </div>
-        <div className="w-full  flex  items-center gap-2 ">
+        <div className="w-full  flex  items-center gap-1   ">
           <label htmlFor="search" className="sm:min-w-[50px] text-[#7a7a7a]">
             To
           </label>
@@ -386,7 +477,7 @@ export const AttendanceTable = ({ data }) => {
             }
           />
         </div>
-        <div className="w-full  flex  items-center gap-2  ">
+        <div className="w-full  flex  items-center gap-1  ">
           <label htmlFor="search" className="sm:min-w-[50px] text-[#7a7a7a]">
             ID
           </label>
@@ -402,21 +493,36 @@ export const AttendanceTable = ({ data }) => {
         </div>
         <div className="w-full flex justify-between items-center">
           <button
-            className="btn border border-gray-400 mr-2"
+            className="btn border border-gray-400 mr-1"
             onClick={() => searchCall()}
           >
             Search
           </button>
-          {!searchParams?.empId && (
+          <div className="flex gap-1">
             <button
-              className="btn bg-[#186080] text-slate-100 "
-              onClick={() =>
-                document.getElementById("report-modal").showModal()
-              }
+              onClick={openAddModal}
+              className="btn btn-success  text-slate-100 "
             >
-              Genrate Report
+              Add Employee
             </button>
-          )}
+            <AddAttendanceModal
+              isOpen={addModalOpen}
+              onClose={closeAddModal}
+              onAdd={onAddAttendance}
+              formData={formData}
+              setFormData={setFormData}
+            />
+            {!searchParams?.empId && (
+              <button
+                className="btn bg-[#186080] text-slate-100 "
+                onClick={() =>
+                  document.getElementById("report-modal").showModal()
+                }
+              >
+                Generate Report
+              </button>
+            )}
+          </div>
           {searchParams?.empId && (
             <button
               className="btn"
@@ -429,11 +535,11 @@ export const AttendanceTable = ({ data }) => {
                 }
                 dispatch({
                   type: "ERROR",
-                  payload: "End Date should be less or equall to today's date",
+                  payload: "End Date should be less or equal to today's date",
                 });
               }}
             >
-              Genrate Report
+              Generate Report
             </button>
           )}
         </div>
@@ -448,6 +554,7 @@ export const AttendanceTable = ({ data }) => {
           onChange={handleSearch}
         />
       </div>
+
       <div className=" overflow-x-auto">
         <table className="table table-zebra-zebra table-lg mb-2">
           <thead>
@@ -485,14 +592,14 @@ export const AttendanceTable = ({ data }) => {
                 </td>
                 <td className="px-2">
                   <div className="flex gap-2 items-center">
-                    {designation === "Director HR" && (
-                      <button
-                        className="px-2 py-2 text-green-600 text-sm hover:bg-green-400 hover:text-white hover:rounded-2xl"
-                        onClick={() => openModal(obj)}
-                      >
-                        <FaPen />
-                      </button>
-                    )}
+                    {/* {designation === "Director HR" && ( */}
+                    <button
+                      className="px-2 py-2 text-green-600 text-sm hover:bg-green-400 hover:text-white hover:rounded-2xl"
+                      onClick={() => openEditModal(obj)}
+                    >
+                      <FaPen />
+                    </button>
+                    {/* )} */}
                   </div>
                 </td>
               </tr>
@@ -500,8 +607,8 @@ export const AttendanceTable = ({ data }) => {
           </tbody>
         </table>
         <EditModal
-          isOpen={modalOpen}
-          onClose={closeModal}
+          isOpen={editModalOpen}
+          onClose={closeEditModal}
           attendance={attendance}
           onUpdate={onUpdate}
           data={yourData}
@@ -570,12 +677,11 @@ export const AttendanceTable = ({ data }) => {
                   }
                   dispatch({
                     type: "ERROR",
-                    payload:
-                      "End Date should be less or equall to today's date",
+                    payload: "End Date should be less or equal to today's date",
                   });
                 }}
               >
-                Genrate
+                Generate
               </button>
             </form>
           </div>
