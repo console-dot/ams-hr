@@ -110,3 +110,16 @@ export const markHoliday = (data) => {
     .then((res) => res.json())
     .catch((err) => err);
 };
+
+export const markAttendance = (employeeId,checkin) => {
+  return fetch(BASE_URL + "/mark-attendance", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("@token"),
+    },
+    body: JSON.stringify({ employeeId, checkin }),
+  })
+    .then((res) => res.json())
+    .catch((err) => err);
+};
