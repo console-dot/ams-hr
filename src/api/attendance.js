@@ -11,14 +11,19 @@ export const getAllAttendace = () => {
     .catch((err) => err);
 };
 
-export const updateAttendance = async (attendanceId, field, date) => {
-  return fetch(BASE_URL + "/update", {
-    method: "PATCH",
+export const updateAttendance = async (
+  attendanceId,
+  employeeId,
+  checkin,
+  checkout
+) => {
+  return fetch(BASE_URL + `/update-attendance/${attendanceId}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("@token"),
     },
-    body: JSON.stringify({ attendanceId, field, date }),
+    body: JSON.stringify({ employeeId, checkin, checkout }),
   }).then((res) => res.json());
 };
 

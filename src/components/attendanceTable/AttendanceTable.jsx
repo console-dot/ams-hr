@@ -2,23 +2,38 @@ import React, { useState, useEffect, useRef } from "react";
 import Modal from "react-modal";
 import { BreadCurmbs, Status } from "../genralComponents";
 import { useNavigate } from "react-router-dom";
-import { getAllAttendace } from "../../api/attendance";
+import { getAllAttendace, updateAttendance } from "../../api/attendance";
 import { useToastState } from "../../context";
 import { ImCross } from "react-icons/im";
 import { FaPen } from "react-icons/fa6";
 
 Modal.setAppElement("#root");
 
-const EditModal = ({ isOpen, onClose, onUpdate, attendance }) => {
-  const [data, setData] = useState(attendance);
+const EditModal = ({
+  data,
+  setData,
+  isOpen,
+  onClose,
+  onUpdate,
+  attendance,
+}) => {
+  useEffect(() => {
+    setData(attendance);
+  }, [attendance]);
+  const handleUpdate = () => {
+    onUpdate(data);
+    onClose();
+  };
 
-  // useEffect(() => {
-  //   setData(attendance);
-  // }, [attendance]);
-  // const handleUpdate = () => {
-  //   onUpdate(data);
-  //   onClose();
-  // };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // console.log(attendance)
 
   return (
     <Modal
@@ -56,7 +71,7 @@ const EditModal = ({ isOpen, onClose, onUpdate, attendance }) => {
               name="checkin"
               type="datetime-local"
               value={data?.checkin?.split("Z")[0].replace("T", " ")}
-              onChange={(e) => setData(e.target.value)}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col">
@@ -65,14 +80,14 @@ const EditModal = ({ isOpen, onClose, onUpdate, attendance }) => {
               name="checkout"
               type="datetime-local"
               value={data?.checkout?.split("Z")[0].replace("T", " ")}
-              onChange={(e) => setData(e.target.value)}
+              onChange={handleChange}
             />
           </div>
           <div className="flex justify-around items-center">
             <div>
               <button
                 className="btn btn-success hover:scale-110"
-                // onClick={handleUpdate}
+                onClick={handleUpdate}
               >
                 Update
               </button>
@@ -179,6 +194,7 @@ export const AttendanceTable = ({ data }) => {
     end: "",
     empId: "",
   });
+  const [yourData, setYourData] = useState({});
 
   const bData = [
     { text: "Home", link: "/dashboard" },
@@ -315,6 +331,25 @@ export const AttendanceTable = ({ data }) => {
 
   const closeModal = () => {
     setModalOpen(false);
+  };
+
+  const onUpdate = async (e) => {
+    // e.preventDefault();
+
+    // console.log(attendance);
+    // console.log("hi", yourData);
+    // const obj = {
+    //   employeeId: attendance?.employeeId?._id,
+    //   checkin: attendance?.checkin,
+    //   checkout: attendance?.checkout,
+    // };
+    await updateAttendance(
+      attendance?._id,
+      attendance?.employeeId?._id,
+      yourData?.checkin,
+      yourData?.checkout
+    );
+    await getAttendances();
   };
 
   return (
@@ -468,6 +503,9 @@ export const AttendanceTable = ({ data }) => {
           isOpen={modalOpen}
           onClose={closeModal}
           attendance={attendance}
+          onUpdate={onUpdate}
+          data={yourData}
+          setData={setYourData}
         />
       </div>
       <div className="w-full flex justify-end items-end">
