@@ -22,8 +22,12 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
   const [depa, setDepa] = useState([]);
   const [id, setId] = useState("");
   const [employeeData, setEmployeeData] = useState("");
-  const [joiningDate, setJoiningDate] = useState(empData?.joiningDate ? new Date(empData.joiningDate) : null);
-  const [endingDate, setEndingDate] = useState(empData?.endingDate ? new Date(empData.endingDate) : null);
+  const [joiningDate, setJoiningDate] = useState(
+    empData?.joiningDate ? new Date(empData.joiningDate) : null
+  );
+  const [endingDate, setEndingDate] = useState(
+    empData?.endingDate ? new Date(empData.endingDate) : null
+  );
   const params = useParams();
   const { dispatch } = useToastState();
   const navigate = useNavigate();
@@ -44,7 +48,12 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
       if (id && id !== "") {
         const res = await updateEmployee(
           id,
-          JSON.stringify({ ...empData, avatar: upload?.data, joiningDate, endingDate })
+          JSON.stringify({
+            ...empData,
+            avatar: upload?.data,
+            joiningDate,
+            endingDate,
+          })
         );
         if (res.status === 200) {
           dispatch({
@@ -60,7 +69,12 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
         }
       } else {
         const res = await createEmployee(
-          JSON.stringify({ ...empData, avatar: upload?.data, joiningDate, endingDate })
+          JSON.stringify({
+            ...empData,
+            avatar: upload?.data,
+            joiningDate,
+            endingDate,
+          })
         );
         if (res.status === 201) {
           dispatch({
@@ -135,13 +149,20 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
   useEffect(() => {
     if (employeeData) {
       setEmpData(employeeData);
-      setJoiningDate(employeeData.joiningDate ? new Date(employeeData.joiningDate) : null);
-      setEndingDate(employeeData.endingDate ? new Date(employeeData.endingDate) : null);
+      setJoiningDate(
+        employeeData.joiningDate ? new Date(employeeData.joiningDate) : null
+      );
+      setEndingDate(
+        employeeData.endingDate ? new Date(employeeData.endingDate) : null
+      );
     }
   }, [employeeData, setEmpData]);
 
   const handleDateChange = (date, dateType) => {
-    setEmpData({ ...empData, [dateType]: date ? format(date, "yyyy-MM-dd") : "" });
+    setEmpData({
+      ...empData,
+      [dateType]: date ? format(date, "yyyy-MM-dd") : "",
+    });
     dateType === "joiningDate" ? setJoiningDate(date) : setEndingDate(date);
   };
 
@@ -370,24 +391,23 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
             </label>
           </div>
           {/* Joining Date */}
-          <div className="flex space-x-4 w-full">
+          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 w-full">
+            {/* Joining Date */}
             <label className="form-control w-full max-w-xs">
               <div className="label">
                 <span className="label-text text-[#9a9a9a]">Joining Date</span>
               </div>
-              <div className="relative">
+              <div className="relative flex items-center">
+                <AiOutlineCalendar className="absolute left-0 ml-3 text-gray-500 z-[2]" />
                 <DatePicker
                   selected={joiningDate}
                   onChange={(date) => handleDateChange(date, "joiningDate")}
                   dateFormat="yyyy-MM-dd"
                   placeholderText="Select Joining Date"
-                  className="input input-bordered w-full max-w-xs"
+                  className="input input-bordered w-full pl-10 max-w-xs z-[1]"
                   id="joiningDate"
                   name="joiningDate"
                 />
-                <div className="absolute top-0 right-0 mt-3 mr-3">
-                  <AiOutlineCalendar className="text-gray-500" />
-                </div>
               </div>
             </label>
 
@@ -397,19 +417,17 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
                 <div className="label">
                   <span className="label-text text-[#9a9a9a]">Ending Date</span>
                 </div>
-                <div className="relative">
+                <div className="relative flex items-center">
+                  <AiOutlineCalendar className="absolute left-0 ml-3 text-gray-500 z-[2]" />
                   <DatePicker
                     selected={endingDate}
                     onChange={(date) => handleDateChange(date, "endingDate")}
                     dateFormat="yyyy-MM-dd"
                     placeholderText="Select Ending Date"
-                    className="input input-bordered w-full max-w-xs"
+                    className="input input-bordered w-full pl-10 max-w-xs z-[1]"
                     id="endingDate"
                     name="endingDate"
                   />
-                  <div className="absolute top-0 right-0 mt-3 mr-3">
-                    <AiOutlineCalendar className="text-gray-500" />
-                  </div>
                 </div>
               </label>
             )}
