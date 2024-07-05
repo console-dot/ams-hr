@@ -12,15 +12,22 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useToastState } from "../../context";
 import { convertDate } from "../attendanceTable";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
+import { AiOutlineCalendar } from "react-icons/ai"; // Calendar icon
 
-export const SignupForm = ({file, setEmpData, empData }) => {
+export const SignupForm = ({ file, setEmpData, empData }) => {
   const [desi, setDesi] = useState([]);
   const [depa, setDepa] = useState([]);
   const [id, setId] = useState("");
   const [employeeData, setEmployeeData] = useState("");
+  const [joiningDate, setJoiningDate] = useState(empData?.joiningDate ? new Date(empData.joiningDate) : null);
+  const [endingDate, setEndingDate] = useState(empData?.endingDate ? new Date(empData.endingDate) : null);
   const params = useParams();
   const { dispatch } = useToastState();
   const navigate = useNavigate();
+
   const submitForm = async () => {
     try {
       const formData = new FormData();
@@ -37,7 +44,7 @@ export const SignupForm = ({file, setEmpData, empData }) => {
       if (id && id !== "") {
         const res = await updateEmployee(
           id,
-          JSON.stringify({ ...empData, avatar: upload?.data })
+          JSON.stringify({ ...empData, avatar: upload?.data, joiningDate, endingDate })
         );
         if (res.status === 200) {
           dispatch({
@@ -53,7 +60,7 @@ export const SignupForm = ({file, setEmpData, empData }) => {
         }
       } else {
         const res = await createEmployee(
-          JSON.stringify({ ...empData, avatar: upload?.data })
+          JSON.stringify({ ...empData, avatar: upload?.data, joiningDate, endingDate })
         );
         if (res.status === 201) {
           dispatch({
@@ -72,6 +79,7 @@ export const SignupForm = ({file, setEmpData, empData }) => {
       console.log(error);
     }
   };
+
   const getAllDesignations = async () => {
     try {
       const res = await getDesignations();
@@ -82,6 +90,7 @@ export const SignupForm = ({file, setEmpData, empData }) => {
       console.log(error);
     }
   };
+
   const getAllDepartments = async () => {
     try {
       const res = await getDepartments();
@@ -104,30 +113,43 @@ export const SignupForm = ({file, setEmpData, empData }) => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getAllDesignations();
   }, []);
+
   useEffect(() => {
     getAllDepartments();
   }, []);
+
   useEffect(() => {
     if (id && id !== "") {
       getEmpData();
     }
   }, [id]);
+
   useEffect(() => {
     setId(params?.id);
   }, [params]);
+
   useEffect(() => {
     if (employeeData) {
       setEmpData(employeeData);
+      setJoiningDate(employeeData.joiningDate ? new Date(employeeData.joiningDate) : null);
+      setEndingDate(employeeData.endingDate ? new Date(employeeData.endingDate) : null);
     }
   }, [employeeData, setEmpData]);
+
+  const handleDateChange = (date, dateType) => {
+    setEmpData({ ...empData, [dateType]: date ? format(date, "yyyy-MM-dd") : "" });
+    dateType === "joiningDate" ? setJoiningDate(date) : setEndingDate(date);
+  };
+
   return (
-    <div className="flex flex-col  p-4 ">
+    <div className="flex flex-col p-4">
       <form>
         {/* First row with Name and Designation */}
-        <div className="flex space-x-4 ">
+        <div className="flex space-x-4">
           {/* Name */}
           <label className="form-control w-full max-w-xs">
             <div className="label">
@@ -154,7 +176,7 @@ export const SignupForm = ({file, setEmpData, empData }) => {
               onChange={(e) =>
                 setEmpData({ ...empData, designation: e.target.value })
               }
-              value={empData?.designation?.tit}
+              value={empData?.designation?.title}
               required
               type="text"
               placeholder="Type here"
@@ -168,15 +190,16 @@ export const SignupForm = ({file, setEmpData, empData }) => {
                   : "Select Designation"}
               </option>
               {desi?.map((obj) => (
-                <>
-                  <option value={obj?._id}>{obj?.title}</option>
-                </>
+                <option key={obj?._id} value={obj?._id}>
+                  {obj?.title}
+                </option>
               ))}
             </select>
           </label>
         </div>
+
         {!id && (
-          <div className="flex space-x-4 ">
+          <div className="flex space-x-4">
             {/* Password */}
             <label className="form-control w-full max-w-xs">
               <div className="label">
@@ -213,7 +236,8 @@ export const SignupForm = ({file, setEmpData, empData }) => {
             </label>
           </div>
         )}
-        <div className="flex space-x-4 ">
+
+        <div className="flex space-x-4">
           {/* email */}
           <label className="form-control w-full max-w-xs">
             <div className="label">
@@ -252,6 +276,7 @@ export const SignupForm = ({file, setEmpData, empData }) => {
             />
           </label>
         </div>
+
         {/* Second row with Team and Department */}
         <div className="flex space-x-4 mb-4">
           {/* Department */}
@@ -277,9 +302,9 @@ export const SignupForm = ({file, setEmpData, empData }) => {
                   : "Select Dept."}
               </option>
               {depa?.map((obj) => (
-                <>
-                  <option value={obj?._id}>{obj?.title}</option>
-                </>
+                <option key={obj?._id} value={obj?._id}>
+                  {obj?.title}
+                </option>
               ))}
             </select>
           </label>
@@ -350,18 +375,20 @@ export const SignupForm = ({file, setEmpData, empData }) => {
               <div className="label">
                 <span className="label-text text-[#9a9a9a]">Joining Date</span>
               </div>
-              <input
-                onChange={(e) =>
-                  setEmpData({ ...empData, joiningDate: e.target.value })
-                }
-                value={convertDate(empData?.joiningDate)}
-                required
-                type={empData?.joiningDate ? "text" : "date"}
-                placeholder="Type here"
-                className="input input-bordered w-full max-w-xs"
-                id="joiningDate"
-                name="joiningDate"
-              />
+              <div className="relative">
+                <DatePicker
+                  selected={joiningDate}
+                  onChange={(date) => handleDateChange(date, "joiningDate")}
+                  dateFormat="yyyy-MM-dd"
+                  placeholderText="Select Joining Date"
+                  className="input input-bordered w-full max-w-xs"
+                  id="joiningDate"
+                  name="joiningDate"
+                />
+                <div className="absolute top-0 right-0 mt-3 mr-3">
+                  <AiOutlineCalendar className="text-gray-500" />
+                </div>
+              </div>
             </label>
 
             {/* Ending Date */}
@@ -370,17 +397,20 @@ export const SignupForm = ({file, setEmpData, empData }) => {
                 <div className="label">
                   <span className="label-text text-[#9a9a9a]">Ending Date</span>
                 </div>
-                <input
-                  onChange={(e) =>
-                    setEmpData({ ...empData, endingDate: e.target.value })
-                  }
-                  value={empData?.endingDate}
-                  type="date"
-                  placeholder="Type here"
-                  className="input input-bordered w-full max-w-xs"
-                  id="endingDate"
-                  name="endingDate"
-                />
+                <div className="relative">
+                  <DatePicker
+                    selected={endingDate}
+                    onChange={(date) => handleDateChange(date, "endingDate")}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select Ending Date"
+                    className="input input-bordered w-full max-w-xs"
+                    id="endingDate"
+                    name="endingDate"
+                  />
+                  <div className="absolute top-0 right-0 mt-3 mr-3">
+                    <AiOutlineCalendar className="text-gray-500" />
+                  </div>
+                </div>
               </label>
             )}
           </div>

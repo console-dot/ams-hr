@@ -1,13 +1,100 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Modal from "react-modal";
 import { BreadCurmbs, Status } from "../genralComponents";
 import { useNavigate } from "react-router-dom";
 import { getAllAttendace } from "../../api/attendance";
 import { useToastState } from "../../context";
 import { ImCross } from "react-icons/im";
+import { FaPen } from "react-icons/fa6";
+
+Modal.setAppElement("#root");
+
+const EditModal = ({ isOpen, onClose, onUpdate, attendance }) => {
+  const [data, setData] = useState(attendance);
+
+  // useEffect(() => {
+  //   setData(attendance);
+  // }, [attendance]);
+  // const handleUpdate = () => {
+  //   onUpdate(data);
+  //   onClose();
+  // };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      style={{
+        content: {
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          bottom: "auto",
+          marginRight: "-50%",
+          transform: "translate(-50%, -50%)",
+        },
+      }}
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col items-start">
+          <div className="text-lg font-bold ">Edit</div>
+          <div className="flex gap-2">
+            <div className="text-sm font-semibold">
+              {" "}
+              {data?.employeeId?.name}
+            </div>
+            <div className="text-sm font-normal">
+              (ID: {data?.employeeId?.employeeId})
+            </div>
+          </div>
+        </div>
+        <hr className=" bg-black" />
+        <div className="flex flex-col justify-center gap-4">
+          <div className="flex flex-col ">
+            <label htmlFor="checkin">Checkin</label>
+            <input
+              name="checkin"
+              type="datetime-local"
+              value={data?.checkin?.split("Z")[0].replace("T", " ")}
+              onChange={(e) => setData(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="checkout">Checkout</label>
+            <input
+              name="checkout"
+              type="datetime-local"
+              value={data?.checkout?.split("Z")[0].replace("T", " ")}
+              onChange={(e) => setData(e.target.value)}
+            />
+          </div>
+          <div className="flex justify-around items-center">
+            <div>
+              <button
+                className="btn btn-success hover:scale-110"
+                // onClick={handleUpdate}
+              >
+                Update
+              </button>
+            </div>
+            <div>
+              <button
+                className="btn btn-error hover:scale-110"
+                onClick={onClose}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 export const convertDateWithoutTime = (value, format = "full") => {
   const dateObj = new Date(value);
   if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
-    // Handle the case where value is not a valid Date object
     return "--";
   }
 
@@ -31,7 +118,6 @@ export const convertDateWithoutTime = (value, format = "full") => {
       day: "numeric",
     };
   } else {
-    // Handle other format options if needed
     return "Invalid Format";
   }
 
@@ -46,7 +132,6 @@ export const convertDateWithoutTime = (value, format = "full") => {
 export const convertDate = (value, format = "full") => {
   const dateObj = new Date(value);
   if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
-    // Handle the case where value is not a valid Date object
     return "--";
   }
 
@@ -65,14 +150,13 @@ export const convertDate = (value, format = "full") => {
       year: "numeric",
       month: "short",
       day: "numeric",
-    };}
-    else if (format === "time") {
-      options = {
-        hour: "numeric",
-        minute: "numeric",
-      };
+    };
+  } else if (format === "time") {
+    options = {
+      hour: "numeric",
+      minute: "numeric",
+    };
   } else {
-    // Handle other format options if needed
     return "Invalid Format";
   }
 
@@ -84,7 +168,7 @@ export const convertDate = (value, format = "full") => {
   return `${formattedDate}`;
 };
 
-export const AttendanceTable = () => {
+export const AttendanceTable = ({ data }) => {
   const [attData, setAttData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -95,6 +179,14 @@ export const AttendanceTable = () => {
     end: "",
     empId: "",
   });
+
+  const bData = [
+    { text: "Home", link: "/dashboard" },
+    { text: "Dashboard", link: "/dashboard", status: "active" },
+  ];
+  const designation = localStorage.getItem("@designation");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [attendance, setAttendace] = useState({});
   const employeeId = useRef();
   const navigate = useNavigate();
   const { dispatch } = useToastState();
@@ -216,10 +308,15 @@ export const AttendanceTable = () => {
     };
   }, []);
 
-  const bData = [
-    { text: "Home", link: "/dashboard" },
-    { text: "Dashboard", link: "/dashboard", status: "active" },
-  ];
+  const openModal = (data) => {
+    setAttendace(data);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <div className="overflow-hidden overflow-y-scroll ">
       <div className="w-full mb-4">
@@ -317,48 +414,73 @@ export const AttendanceTable = () => {
         />
       </div>
       <div className=" overflow-x-auto">
-        <table className="table table-zebra-zebra table-lg mb-2  ">
+        <table className="table table-zebra-zebra table-lg mb-2">
           <thead>
             <tr>
               <th className="px-3">Employee ID</th>
-
               <th>Employee Name</th>
               <th>Designation</th>
               <th>CheckIn Time</th>
               <th>CheckOut Time</th>
               <th>Status</th>
+              <th>Edit</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedData?.map((obj, index) => (
-              <tr key={index}>
+            {paginatedData?.map((obj) => (
+              <tr key={obj._id}>
                 <th className="px-2">{obj?.employeeId?.employeeId}</th>
-                <td className="px-2"> {obj?.employeeId?.name} </td>
+                <td className="px-2">{obj?.employeeId?.name}</td>
                 <td className="px-2">{obj?.employeeId?.designation?.title}</td>
-                <td className=" px-2">{convertDate(obj?.checkin)}</td>
-                <td className="flex items-start justify-start flex-col  gap-2 px-2">
-                  {convertDate(obj?.checkout)}
-                  <Status checkin={obj?.checkin} checkout={obj?.checkout} />
+                <td className="px-2">
+                  <div className="flex flex-col gap-0 ">
+                    <div> {convertDate(obj?.checkin)}</div>
+                    <div className="flex  ">
+                      <Status checkin={obj?.checkin} checkout={obj?.checkout} />
+                    </div>
+                  </div>
+                </td>
+                <td className="px-2">
+                  <div className="flex gap-2 items-center">
+                    {convertDate(obj?.checkout)}
+                  </div>
                 </td>
                 <td className="capitalize px-2">
                   {obj?.status ? obj?.status + " " + `day` : "On going"}
+                </td>
+                <td className="px-2">
+                  <div className="flex gap-2 items-center">
+                    {designation === "Director HR" && (
+                      <button
+                        className="px-2 py-2 text-green-600 text-sm hover:bg-green-400 hover:text-white hover:rounded-2xl"
+                        onClick={() => openModal(obj)}
+                      >
+                        <FaPen />
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <EditModal
+          isOpen={modalOpen}
+          onClose={closeModal}
+          attendance={attendance}
+        />
       </div>
       <div className="w-full flex justify-end items-end">
         {renderPaginationButtons()}
       </div>
-
       <dialog id="report-modal" className="modal ">
         <div className="modal-box ">
           <div className="modal-action  m-0 p-0 mb-2">
             <form method="dialog">
-              <ImCross onClick={() =>
-                document.getElementById("report-modal").close() 
-              } className="cursor-pointer"/>
+              <ImCross
+                onClick={() => document.getElementById("report-modal").close()}
+                className="cursor-pointer"
+              />
             </form>
           </div>
           <div className="w-full  flex justify-between items-center mb-2 gap-2">
@@ -385,7 +507,6 @@ export const AttendanceTable = () => {
               }
             />
           </div>
-
           <div className="w-full  flex justify-between items-center gap-2 ">
             <label htmlFor="eId">Employee ID</label>
             <input
@@ -398,7 +519,6 @@ export const AttendanceTable = () => {
               }
             />
           </div>
-
           <div className="modal-action">
             <form method="dialog">
               <button
