@@ -141,16 +141,18 @@ const EditModal = ({
         <hr className="bg-black" />
         <div className="flex flex-col justify-center gap-4">
           <div className="flex flex-col ">
-            <label htmlFor="checkin">Checkin</label>
+            <label htmlFor="checkin">Checkin {convertDate(data?.checkin)}</label>
             <input
               name="checkin"
               type="datetime-local"
-              value={data?.checkin?.split("Z")[0].replace("T", " ")}
+              value={
+                data?.checkin?.split("Z")[0].replace("T", " ")
+              }
               onChange={handleChange}
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="checkout">Checkout</label>
+            <label htmlFor="checkout">Checkout {convertDate(data?.checkout)}</label>
             <input
               name="checkout"
               type="datetime-local"
@@ -432,14 +434,13 @@ export const AttendanceTable = ({ data }) => {
   };
 
   const onAddAttendance = async (formData) => {
-    console.log("1", formData);
     const employees = await getAllEmployees();
     if (employees.status === 200) {
       const foundEmployee = await employees?.data?.find(
         (employee) => employee.employeeId == formData?.employeeId
       );
-      console.log("2", foundEmployee?._id);
       await markAttendance(foundEmployee?._id, formData?.checkin);
+      await getAttendances();
     }
   };
 
@@ -593,6 +594,7 @@ export const AttendanceTable = ({ data }) => {
                 <td className="px-2">
                   <div className="flex gap-2 items-center">
                     {/* {designation === "Director HR" && ( */}
+
                     <button
                       className="px-2 py-2 text-green-600 text-sm hover:bg-green-400 hover:text-white hover:rounded-2xl"
                       onClick={() => openEditModal(obj)}
