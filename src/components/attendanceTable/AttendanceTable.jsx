@@ -432,15 +432,14 @@ export const AttendanceTable = ({ data }) => {
   };
 
   const onAddAttendance = async (formData) => {
-    console.log("1", formData);
     const employees = await getAllEmployees();
     if (employees.status === 200) {
       const foundEmployee = await employees?.data?.find(
         (employee) => employee.employeeId == formData?.employeeId
       );
-      console.log("2", foundEmployee?._id);
       await markAttendance(foundEmployee?._id, formData?.checkin);
     }
+    await getAttendances();
   };
 
   return (
@@ -448,7 +447,7 @@ export const AttendanceTable = ({ data }) => {
       <div className="w-full mb-4">
         <BreadCurmbs data={bData} />
       </div>
-      <div className="w-full gap-2 flex justify-start flex-col items-center px-4 mb-2 lg:flex-row lg:justify-start">
+      <div className="w-full gap-1 flex justify-start flex-col items-center px-4 mb-2 lg:flex-row lg:justify-start">
         <div className="w-full  flex  items-center gap-2  ">
           <label htmlFor="search" className="sm:min-w-[50px] text-[#7a7a7a]">
             From
@@ -498,12 +497,12 @@ export const AttendanceTable = ({ data }) => {
           >
             Search
           </button>
-          <div className="flex gap-1">
+          <div className="flex gap-1 ">
             <button
               onClick={openAddModal}
-              className="btn btn-success  text-slate-100 "
+              className="btn btn-success text-xs  text-slate-100 "
             >
-              Add Employee
+              Add Attendance
             </button>
             <AddAttendanceModal
               isOpen={addModalOpen}
@@ -514,7 +513,7 @@ export const AttendanceTable = ({ data }) => {
             />
             {!searchParams?.empId && (
               <button
-                className="btn bg-[#186080] text-slate-100 "
+                className="btn bg-[#186080] text-xs text-slate-100 "
                 onClick={() =>
                   document.getElementById("report-modal").showModal()
                 }
