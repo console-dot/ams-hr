@@ -141,11 +141,14 @@ const EditModal = ({
         <hr className="bg-black" />
         <div className="flex flex-col justify-center gap-4">
           <div className="flex flex-col ">
-            <label htmlFor="checkin">Checkin</label>
+            <label htmlFor="checkin">
+              Checkin {convertDate(data?.checkin)}
+            </label>
             <input
               name="checkin"
               type="datetime-local"
-              value={data?.checkin?.split("Z")[0].replace("T", " ")}
+              // value={data?.checkin?.split("Z")[0].replace("T", " ")}
+              value={data.checkin && convertUTCToPSTForInput(data?.checkin)}
               onChange={handleChange}
             />
           </div>
@@ -154,7 +157,7 @@ const EditModal = ({
             <input
               name="checkout"
               type="datetime-local"
-              value={data?.checkout?.split("Z")[0].replace("T", " ")}
+              value={data?.checkout && convertUTCToPSTForInput(data?.checkout)}
               onChange={handleChange}
             />
           </div>
@@ -256,6 +259,33 @@ export const convertDate = (value, format = "full") => {
   }).format(dateObj);
 
   return `${formattedDate}`;
+};
+
+export const convertUTCToPSTForInput = (utcDate) => {
+  const date = new Date(utcDate);
+
+  // Convert to PST (Pakistan Standard Time, which is UTC+5)
+  const options = {
+    timeZone: "Asia/Karachi",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+
+  const pstDate = new Intl.DateTimeFormat("en-CA", options).format(date); // 'en-CA' format is 'YYYY-MM-DD'
+  const [datePart, timePart] = pstDate.split(", ");
+  const timePartFormatted = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: undefined,
+    hour12: false,
+    timeZone: "Asia/Karachi",
+  }).format(date);
+
+  return `${datePart}T${timePartFormatted}`;
 };
 
 export const AttendanceTable = ({ data }) => {
@@ -438,6 +468,7 @@ export const AttendanceTable = ({ data }) => {
         (employee) => employee.employeeId == formData?.employeeId
       );
       await markAttendance(foundEmployee?._id, formData?.checkin);
+      await getAttendances();
     }
     await getAttendances();
   };
@@ -592,6 +623,7 @@ export const AttendanceTable = ({ data }) => {
                 <td className="px-2">
                   <div className="flex gap-2 items-center">
                     {/* {designation === "Director HR" && ( */}
+
                     <button
                       className="px-2 py-2 text-green-600 text-sm hover:bg-green-400 hover:text-white hover:rounded-2xl"
                       onClick={() => openEditModal(obj)}
