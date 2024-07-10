@@ -19,6 +19,7 @@ import { AiOutlineCalendar } from "react-icons/ai"; // Calendar icon
 
 export const SignupForm = ({ file, setEmpData, empData }) => {
   const [desi, setDesi] = useState([]);
+  const [filteredDesi, setFilteredDesi] = useState([]);
   const [depa, setDepa] = useState([]);
   const [id, setId] = useState("");
   const [employeeData, setEmployeeData] = useState("");
@@ -166,6 +167,18 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
     dateType === "joiningDate" ? setJoiningDate(date) : setEndingDate(date);
   };
 
+  const handleDepartmentChange = (e) => {
+    const selectedDept = e.target.value;
+    setEmpData({ ...empData, department: selectedDept });
+
+    // Filter designations by selected department
+    const filteredDesignations = desi.filter(
+      (desig) => desig.department === selectedDept
+    );
+
+    setFilteredDesi(filteredDesignations);
+  };
+
   return (
     <div className="flex flex-col p-4">
       <form>
@@ -210,7 +223,7 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
                   ? empData?.designation?.title
                   : "Select Designation"}
               </option>
-              {desi?.map((obj) => (
+              {filteredDesi?.map((obj) => (
                 <option key={obj?._id} value={obj?._id}>
                   {obj?.title}
                 </option>
@@ -306,9 +319,7 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
               <span className="label-text text-[#9a9a9a]">Department</span>
             </div>
             <select
-              onChange={(e) =>
-                setEmpData({ ...empData, department: e.target.value })
-              }
+              onChange={handleDepartmentChange}
               value={empData?.department}
               required
               type="text"
