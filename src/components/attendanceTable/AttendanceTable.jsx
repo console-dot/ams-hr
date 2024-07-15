@@ -149,8 +149,8 @@ const EditModal = ({
               name="checkin"
               type="datetime-local"
               // value={data?.checkin?.split("Z")[0].replace("T", " ")}
-              // value={data.checkin && convertUTCToPSTForInput(data?.checkin)}
-              value={data?.checkin ? convertDateToPST(data?.checkin) : ""}
+              value={data.checkin && convertUTCToPSTForInput(data?.checkin)}
+              // value={data?.checkin ? convertDateToPST(data?.checkin) : ""}
               onChange={handleChange}
             />
           </div>
@@ -160,8 +160,8 @@ const EditModal = ({
               name="checkout"
               type="datetime-local"
               // value={data?.checkout?.split("Z")[0].replace("T", " ")}
-              // value={data?.checkout && convertUTCToPSTForInput(data?.checkout)}
-              value={data?.checkout ? convertDateToPST(data?.checkout) : ""}
+              value={data?.checkout && convertUTCToPSTForInput(data?.checkout)}
+              // value={data?.checkout ? convertDateToPST(data?.checkout) : ""}
               onChange={handleChange}
             />
           </div>
