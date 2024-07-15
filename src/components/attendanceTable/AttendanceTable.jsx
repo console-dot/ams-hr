@@ -12,6 +12,7 @@ import { ImCross } from "react-icons/im";
 import { FaPen } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa";
 import { getAllEmployees } from "../../api";
+import moment from "moment-timezone";
 
 Modal.setAppElement("#root");
 
@@ -148,7 +149,8 @@ const EditModal = ({
               name="checkin"
               type="datetime-local"
               // value={data?.checkin?.split("Z")[0].replace("T", " ")}
-              value={data.checkin && convertUTCToPSTForInput(data?.checkin)}
+              // value={data.checkin && convertUTCToPSTForInput(data?.checkin)}
+              value={data?.checkin ? convertDateToPST(data?.checkin) : ""}
               onChange={handleChange}
             />
           </div>
@@ -157,7 +159,9 @@ const EditModal = ({
             <input
               name="checkout"
               type="datetime-local"
-              value={data?.checkout && convertUTCToPSTForInput(data?.checkout)}
+              // value={data?.checkout?.split("Z")[0].replace("T", " ")}
+              // value={data?.checkout && convertUTCToPSTForInput(data?.checkout)}
+              value={data?.checkout ? convertDateToPST(data?.checkout) : ""}
               onChange={handleChange}
             />
           </div>
@@ -286,6 +290,11 @@ export const convertUTCToPSTForInput = (utcDate) => {
   }).format(date);
 
   return `${datePart}T${timePartFormatted}`;
+};
+
+const convertDateToPST = (date) => {
+  const pstDate = moment(date).tz("Asia/Karachi");
+  return pstDate.format("YYYY-MM-DDTHH:mm");
 };
 
 export const AttendanceTable = ({ data }) => {
