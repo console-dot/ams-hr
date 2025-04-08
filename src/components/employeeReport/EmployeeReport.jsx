@@ -23,7 +23,7 @@ export const EmployeeReport = () => {
   const empId = p.get("empId");
   const start = p.get("start");
   const end = p.get("end");
-  const searchParams = {
+  const searchParams = {  
     start: start,
     end: end,
     empId: empId,

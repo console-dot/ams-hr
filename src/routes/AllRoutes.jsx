@@ -6,6 +6,7 @@ import {
   EmployeeReportPage,
   Employess,
   Login,
+  PublicHolidaysPage,
   RegisterEmployee,
 } from "../pages";
 import { MyPDFDocument } from "../components/pdfDownloads/MyPDFDocument ";
@@ -42,6 +43,7 @@ export const AllRoutes = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/public-holidays" element={<PublicHolidaysPage />} />
       <Route path="/report" element={<EmployeeReportPage />} />
       <Route path="/register" element={<RegisterEmployee />} />
       <Route path="/employees" element={<Employess />} />
