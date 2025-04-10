@@ -3,16 +3,18 @@ import Modal from "react-modal";
 import { BreadCurmbs, Status } from "../genralComponents";
 import { useNavigate } from "react-router-dom";
 import {
+  deleteAttendance,
   getAllAttendace,
   markAttendance,
   updateAttendance,
 } from "../../api/attendance";
 import { useToastState } from "../../context";
 import { ImCross } from "react-icons/im";
-import { FaPen } from "react-icons/fa6";
+import { FaPen, FaTrash } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa";
 import { getAllEmployees } from "../../api";
 import moment from "moment-timezone";
+import { CiTrash } from "react-icons/ci";
 
 Modal.setAppElement("#root");
 
@@ -132,7 +134,7 @@ const EditModal = ({
           <div className="flex gap-2">
             <div className="text-sm font-semibold">
               {" "}
-              {data?.employeeId?.name}
+              <input value={data?.employeeId?.name} />
             </div>
             <div className="text-sm font-normal">
               (ID: {data?.employeeId?.employeeId})
@@ -180,6 +182,86 @@ const EditModal = ({
                 onClick={onClose}
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+const DeleteModal = ({
+  data,
+  setData,
+  isOpen,
+  onClose,
+  onUpdate,
+  attendance,
+}) => {
+  useEffect(() => {
+    setData(attendance);
+  }, [attendance]);
+  const handleUpdate = () => {
+    onUpdate(data);
+    onClose();
+  };
+
+  const handleDelete = () => {};
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      style={{
+        content: {
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          bottom: "auto",
+          marginRight: "-50%",
+          transform: "translate(-50%, -50%)",
+        },
+      }}
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col items-start">
+          <div className="text-lg font-bold ">Delete</div>
+          <div className="flex gap-2">
+            <div className="text-sm font-semibold">
+              {" "}
+              <input value={data?.employeeId?.name} />
+            </div>
+            <div className="text-sm font-normal">
+              (ID: {data?.employeeId?.employeeId})
+            </div>
+          </div>
+        </div>
+        <hr className="bg-black" />
+        <h1 className="text-center text-lg text-red-600">Are You Sure?</h1>
+        <div className="flex flex-col justify-center gap-4">
+          <div className="flex justify-around items-center">
+            <div>
+              <button
+                className="btn btn-success hover:scale-110"
+                onClick={handleUpdate}
+              >
+                Yes
+              </button>
+            </div>
+            <div>
+              <button
+                className="btn btn-error hover:scale-110"
+                onClick={onClose}
+              >
+                No
               </button>
             </div>
           </div>
@@ -311,6 +393,7 @@ export const AttendanceTable = ({ data }) => {
   const [yourData, setYourData] = useState({});
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     employeeId: "",
     checkin: "",
@@ -447,9 +530,17 @@ export const AttendanceTable = ({ data }) => {
     setAttendace(data);
     setEditModalOpen(true);
   };
+  const openDeleteModal = (data) => {
+    console.log(data);
+    setAttendace(data);
+    setDeleteModalOpen(true);
+  };
 
   const closeEditModal = () => {
     setEditModalOpen(false);
+  };
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
   };
 
   const openAddModal = () => {
@@ -467,6 +558,10 @@ export const AttendanceTable = ({ data }) => {
       yourData?.checkin,
       yourData?.checkout
     );
+    await getAttendances();
+  };
+  const onDelete = async (e) => {
+    await deleteAttendance(attendance?._id);
     await getAttendances();
   };
 
@@ -604,7 +699,7 @@ export const AttendanceTable = ({ data }) => {
               <th>CheckIn Time</th>
               <th>CheckOut Time</th>
               <th>Status</th>
-              <th>Edit</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -639,6 +734,12 @@ export const AttendanceTable = ({ data }) => {
                     >
                       <FaPen />
                     </button>
+                    <button
+                      className="px-2 py-2 text-red-600 text-sm hover:bg-red-500 font-bold hover:text-white hover:rounded-2xl"
+                      onClick={() => openDeleteModal(obj)}
+                    >
+                      <FaTrash />
+                    </button>
                     {/* )} */}
                   </div>
                 </td>
@@ -651,6 +752,14 @@ export const AttendanceTable = ({ data }) => {
           onClose={closeEditModal}
           attendance={attendance}
           onUpdate={onUpdate}
+          data={yourData}
+          setData={setYourData}
+        />
+        <DeleteModal
+          isOpen={deleteModalOpen}
+          onClose={closeDeleteModal}
+          attendance={attendance}
+          onUpdate={onDelete}
           data={yourData}
           setData={setYourData}
         />
