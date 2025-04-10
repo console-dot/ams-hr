@@ -201,7 +201,55 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
             />
           </label>
 
-          {/* Designation */}
+          <label className="form-control w-full max-w-xs">
+            <div className="label">
+              <span className="label-text text-[#9a9a9a]">Employee Id</span>
+            </div>
+            <input
+              onChange={(e) =>
+                setEmpData({ ...empData, employeeId: e.target.value })
+              }
+              value={empData?.employeeId}
+              required
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered w-full max-w-xs"
+              id="employeeId"
+              name="employeeId"
+            />
+          </label>
+         
+        </div>
+
+   {/* Second row with Team and Department */}
+   <div className="flex space-x-4 mb-4">
+          {/* Department */}
+          <label className="form-control w-full max-w-xs">
+            <div className="label">
+              <span className="label-text text-[#9a9a9a]">Department</span>
+            </div>
+            <select
+              onChange={handleDepartmentChange}
+              value={empData?.department}
+              required
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered w-full max-w-xs"
+              name="department"
+              id="department"
+            >
+              <option default>
+                {empData?.designation?.department?.title
+                  ? empData?.designation?.department?.title
+                  : "Select Dept."}
+              </option>
+              {depa?.map((obj) => (
+                <option key={obj?._id} value={obj?._id}>
+                  {obj?.title}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="form-control w-full max-w-xs">
             <div className="label">
               <span className="label-text text-[#9a9a9a]">Designation</span>
@@ -311,53 +359,7 @@ export const SignupForm = ({ file, setEmpData, empData }) => {
           </label>
         </div>
 
-        {/* Second row with Team and Department */}
-        <div className="flex space-x-4 mb-4">
-          {/* Department */}
-          <label className="form-control w-full max-w-xs">
-            <div className="label">
-              <span className="label-text text-[#9a9a9a]">Department</span>
-            </div>
-            <select
-              onChange={handleDepartmentChange}
-              value={empData?.department}
-              required
-              type="text"
-              placeholder="Type here"
-              className="input input-bordered w-full max-w-xs"
-              name="department"
-              id="department"
-            >
-              <option default>
-                {empData?.designation?.department?.title
-                  ? empData?.designation?.department?.title
-                  : "Select Dept."}
-              </option>
-              {depa?.map((obj) => (
-                <option key={obj?._id} value={obj?._id}>
-                  {obj?.title}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="form-control w-full max-w-xs">
-            <div className="label">
-              <span className="label-text text-[#9a9a9a]">Employee Id</span>
-            </div>
-            <input
-              onChange={(e) =>
-                setEmpData({ ...empData, employeeId: e.target.value })
-              }
-              value={empData?.employeeId}
-              required
-              type="text"
-              placeholder="Type here"
-              className="input input-bordered w-full max-w-xs"
-              id="employeeId"
-              name="employeeId"
-            />
-          </label>
-        </div>
+     
 
         {/* Qualification section */}
         <div className="flex justify-start items-start flex-col flex-wrap space-y-4 w-full mb-4">

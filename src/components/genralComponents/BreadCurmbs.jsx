@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 export const BreadCurmbs = ({ data }) => {
+  // console.log(data,"check")
   return (
     <div className="text-sm breadcrumbs w-full px-5">
       <ul>

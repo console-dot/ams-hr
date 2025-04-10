@@ -4,3 +4,4 @@ export * from "./employeeReport";
 export * from "./signupEmployee";
 export * from "./employeesTable";
 export * from "./employeeLeaves";
+export * from "./publicHolidays";

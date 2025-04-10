@@ -98,7 +98,21 @@ export const fetchAllLeaves = () => {
     .catch((err) => err);
 };
 
+
+export const fetchAllHolidays = () => {
+  const url = `${BASE_URL}/all-holidays`;
+  return fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: ` ${localStorage.getItem("@token")}`,
+    },
+  })
+    .then((res) => res.json())
+    .catch((err) => err);
+};
+
 export const markHoliday = (data) => {
+  console.log(data)
   return fetch(BASE_URL + "/mark-holiday", {
     method: "POST",
     headers: {
