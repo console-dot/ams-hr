@@ -26,6 +26,17 @@ export const updateAttendance = async (
     body: JSON.stringify({ employeeId, checkin, checkout }),
   }).then((res) => res.json());
 };
+export const deleteAttendance = async (
+  attendanceId,
+) => {
+  return fetch(BASE_URL + `/delete-attendance/${attendanceId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("@token"),
+    },
+  }).then((res) => res.json());
+};
 
 export const markCheckout = async (attendanceId, date) => {
   return fetch(BASE_URL + "mark-checkout", {
